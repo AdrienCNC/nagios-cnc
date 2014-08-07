@@ -63,10 +63,10 @@ sub check_options {
 check_options();
 
 if ($o_type eq "all"){
-	$url = 'http://api9.controlncloud.net/mychecks/plugin/status/';
+	$url = 'http://api.controlncloud.net/mychecks/plugin/status/';
 	$content = '{"apiKey":"' . $o_apikey . '"}';
 } else {
-	$url = 'http://api9.controlncloud.net/mychecks/plugin/measure/';
+	$url = 'http://api.controlncloud.net/mychecks/plugin/measure/';
 	$content = '{"apiKey":"' . $o_apikey . '","controlId":"' . $o_type .'"}';
 } 
 
