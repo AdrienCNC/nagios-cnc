@@ -26,7 +26,7 @@ sub print_usage {
     print "Usage: $0 -k <controlncloud_user_apikey> -t <check_type> [-v] [-h]\n";
     print "options:\n";
     print " -k           Your ControlNCloud API KEY\n";
-    print " -t           type \"all\" or Your ControlNCloud Check ID\n";
+    print " -t           -t all: overall status or -t <control id> : one control status or -t list : to get the list of your control\n";
     print " -v           display version\n"; 
     print " -h           display help\n\n"; 
     print "\nCopyright (C) 2014 TheControlNCloud <contact\@controlncloud.com>\n";
@@ -65,7 +65,12 @@ check_options();
 if ($o_type eq "all"){
 	$url = 'http://api.controlncloud.com/mychecks/plugin/status/';
 	$content = '{"apiKey":"' . $o_apikey . '"}';
-} else {
+}
+elsif ($o_type eq "list"){
+	$url = 'http://api.controlncloud.com/mychecks/plugin/controls/';
+	$content = '{"apiKey":"' . $o_apikey . '"}';
+}
+else {
 	$url = 'http://api.controlncloud.com/mychecks/plugin/measure/';
 	$content = '{"apiKey":"' . $o_apikey . '","controlId":"' . $o_type .'"}';
 } 
@@ -110,8 +115,25 @@ if ($code  == 200) {
 			case "3" 	{ exit $ERRORS{'UNKNOWN'}; }
 			else 		{ exit $ERRORS{'UNKNOWN'};;}
 		}
-
-	} else {	
+	}
+	elsif ($o_type eq "list"){
+		my $list_result = $response->content;
+		$list_result  =~ s/[\"\\]+//g;
+        	$list_result  =~ s/r_result://;
+		$list_result  =~ s/{\[{//;	
+		$list_result  =~ s/}\]}//;
+		
+		my @list_values = split("}.{",$list_result);
+		
+		print "\n\nControlNCloud Plugin List\n\n";
+	
+		foreach my $val (@list_values) {
+			my @control_values = split(",",$val);
+    			printf("%15s\t%30s\t%50s\n",$control_values[0],$control_values[1],$control_values[2]);
+		}
+		
+	} 
+	else {	
 
 		my $nagios_perfdata = $values[1];
 		my $nagios_perfdata_min = $values[2];
@@ -133,3 +155,4 @@ if ($code  == 200) {
 	print "UNKNOWN - ",$status,"|error=0;;;0\n";  
 	exit $ERRORS{'UNKNOWN'};
 }
+
