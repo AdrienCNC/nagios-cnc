@@ -63,17 +63,17 @@ sub check_options {
 check_options();
 
 if ($o_type eq "all"){
-	$url = 'http://api.controlncloud.com/mychecks/plugin/status/';
-	$content = '{"apiKey":"' . $o_apikey . '"}';
+        $url = 'http://api.controlncloud.com/api/v1/nagios/status/';
+        $content = $o_apikey;
 }
 elsif ($o_type eq "list"){
-	$url = 'http://api.controlncloud.com/mychecks/plugin/controls/';
-	$content = '{"apiKey":"' . $o_apikey . '"}';
+        $url = 'http://api.controlncloud.com/api/v1/nagios/controls/';
+        $content = $o_apikey;
 }
 else {
-	$url = 'http://api.controlncloud.com/mychecks/plugin/measure/';
-	$content = '{"apiKey":"' . $o_apikey . '","controlId":"' . $o_type .'"}';
-} 
+        $url = 'http://api.controlncloud.com/api/v1/nagios/measure/' . $o_type;
+        $content = $o_apikey;
+}
 
 my $ua = LWP::UserAgent->new();
 
